@@ -10,11 +10,11 @@ type Graph interface {
 	// links
 	UpsertLink(link *Link) error
 	FindLink(id uuid.UUID) (*Link, error)
-	Links(fromId, toId uuid.UUID, retrieveBefore time.Time) (Iterator[*Link], error)
+	Links(fromId, toId uuid.UUID, retrieveBefore time.Time) (LinkIterator, error)
 	// edges
 	UpsertEdge(edge *Edge) error
-	RemoveStaleEdges(fromId uuid.UUID, updateBefore time.Time) error
-	Edges(fromId, toId uuid.UUID, updateBefore time.Time) (Iterator[*Edge], error)
+	RemoveStaleEdges(fromId uuid.UUID, updatedBefore time.Time) error
+	Edges(fromId, toId uuid.UUID, updatedBefore time.Time) (EdgeIterator, error)
 }
 
 type Link struct {
@@ -40,3 +40,7 @@ type Iterator[T any] interface {
 	// Close releases any resources associated with an iterator.
 	Close() error
 }
+
+type LinkIterator = Iterator[*Link]
+
+type EdgeIterator = Iterator[*Edge]
