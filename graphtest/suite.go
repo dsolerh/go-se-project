@@ -5,18 +5,19 @@ import (
 	"math/big"
 	"sort"
 	"sync"
-	"testing"
 	"time"
 
 	"go-se-project/graph"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 // Suite defines a re-usable set of graph-related tests that can
 // be executed against any type that implements graph.Graph.
 type Suite struct {
+	suite.Suite
 	g graph.Graph
 }
 
@@ -26,8 +27,8 @@ func (s *Suite) SetGraph(g graph.Graph) {
 }
 
 // TestUpsertLink verifies the link upsert logic.
-func (s *Suite) TestUpsertLink(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestUpsertLink() {
+	assert := assert.New(s.T())
 
 	// Create a new link
 	original := &graph.Link{
@@ -92,8 +93,8 @@ func (s *Suite) TestUpsertLink(t *testing.T) {
 }
 
 // TestFindLink verifies the link lookup logic.
-func (s *Suite) TestFindLink(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestFindLink() {
+	assert := assert.New(s.T())
 
 	// Create a new link
 	link := &graph.Link{
@@ -121,8 +122,8 @@ func (s *Suite) TestFindLink(t *testing.T) {
 
 // TestConcurrentLinkIterators verifies that multiple clients can concurrently
 // access the store.
-func (s *Suite) TestConcurrentLinkIterators(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestConcurrentLinkIterators() {
+	assert := assert.New(s.T())
 
 	var (
 		wg           sync.WaitGroup
@@ -183,8 +184,8 @@ func (s *Suite) TestConcurrentLinkIterators(t *testing.T) {
 
 // TestLinkIteratorTimeFilter verifies that the time-based filtering of the
 // link iterator works as expected.
-func (s *Suite) TestLinkIteratorTimeFilter(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestLinkIteratorTimeFilter() {
+	assert := assert.New(s.T())
 
 	linkUUIDs := make([]uuid.UUID, 3)
 	linkInsertTimes := make([]time.Time, len(linkUUIDs))
@@ -198,15 +199,15 @@ func (s *Suite) TestLinkIteratorTimeFilter(t *testing.T) {
 	}
 
 	for i, updateTime := range linkInsertTimes {
-		t.Logf("fetching links created before edge %d", i)
+		s.T().Logf("fetching links created before edge %d", i)
 		s.assertIteratedLinkIDsMatch(assert, updateTime, linkUUIDs[:i+1])
 	}
 }
 
 // TestPartitionedLinkIterators verifies that the graph partitioning logic
 // works as expected even when partitions contain an uneven number of items.
-func (s *Suite) TestPartitionedLinkIterators(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestPartitionedLinkIterators() {
+	assert := assert.New(s.T())
 
 	numLinks := 100
 	numPartitions := 10
@@ -224,8 +225,8 @@ func (s *Suite) TestPartitionedLinkIterators(t *testing.T) {
 }
 
 // TestUpsertEdge verifies the edge upsert logic.
-func (s *Suite) TestUpsertEdge(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestUpsertEdge() {
+	assert := assert.New(s.T())
 
 	// Create links
 	linkUUIDs := make([]uuid.UUID, 3)
@@ -277,8 +278,8 @@ func (s *Suite) TestUpsertEdge(t *testing.T) {
 
 // TestConcurrentEdgeIterators verifies that multiple clients can concurrently
 // access the store.
-func (s *Suite) TestConcurrentEdgeIterators(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestConcurrentEdgeIterators() {
+	assert := assert.New(s.T())
 
 	var (
 		wg           sync.WaitGroup
@@ -348,8 +349,8 @@ func (s *Suite) TestConcurrentEdgeIterators(t *testing.T) {
 
 // TestEdgeIteratorTimeFilter verifies that the time-based filtering of the
 // edge iterator works as expected.
-func (s *Suite) TestEdgeIteratorTimeFilter(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestEdgeIteratorTimeFilter() {
+	assert := assert.New(s.T())
 
 	linkUUIDs := make([]uuid.UUID, 3)
 	linkInsertTimes := make([]time.Time, len(linkUUIDs))
@@ -374,15 +375,15 @@ func (s *Suite) TestEdgeIteratorTimeFilter(t *testing.T) {
 	}
 
 	for i, updateTime := range edgeInsertTimes {
-		t.Logf("fetching edges created before edge %d", i)
+		s.T().Logf("fetching edges created before edge %d", i)
 		s.assertIteratedEdgeIDsMatch(assert, updateTime, edgeUUIDs[:i+1])
 	}
 }
 
 // TestPartitionedEdgeIterators verifies that the graph partitioning logic
 // works as expected even when partitions contain an uneven number of items.
-func (s *Suite) TestPartitionedEdgeIterators(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestPartitionedEdgeIterators() {
+	assert := assert.New(s.T())
 
 	numEdges := 100
 	numPartitions := 10
@@ -411,8 +412,8 @@ func (s *Suite) TestPartitionedEdgeIterators(t *testing.T) {
 }
 
 // TestRemoveStaleEdges verifies that the edge deletion logic works as expected.
-func (s *Suite) TestRemoveStaleEdges(t *testing.T) {
-	assert := assert.New(t)
+func (s *Suite) TestRemoveStaleEdges() {
+	assert := assert.New(s.T())
 
 	numEdges := 100
 	linkUUIDs := make([]uuid.UUID, numEdges*4)
