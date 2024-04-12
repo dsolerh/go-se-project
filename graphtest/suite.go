@@ -2,12 +2,13 @@ package graphtest
 
 import (
 	"fmt"
-	"go-se-project/graph"
 	"math/big"
 	"sort"
 	"sync"
 	"testing"
 	"time"
+
+	"go-se-project/graph"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -588,12 +589,12 @@ func (s *Suite) assertIteratedLinkIDsMatch(assert *assert.Assertions, updatedBef
 	assert.Equal(got, exp)
 }
 
-func (s *Suite) partitionedLinkIterator(assert *assert.Assertions, partition, numPartitions int, accessedBefore time.Time) (graph.Iterator[*graph.Link], error) {
+func (s *Suite) partitionedLinkIterator(assert *assert.Assertions, partition, numPartitions int, accessedBefore time.Time) (graph.LinkIterator, error) {
 	from, to := s.partitionRange(assert, partition, numPartitions)
 	return s.g.Links(from, to, accessedBefore)
 }
 
-func (s *Suite) partitionedEdgeIterator(assert *assert.Assertions, partition, numPartitions int, updatedBefore time.Time) (graph.Iterator[*graph.Edge], error) {
+func (s *Suite) partitionedEdgeIterator(assert *assert.Assertions, partition, numPartitions int, updatedBefore time.Time) (graph.EdgeIterator, error) {
 	from, to := s.partitionRange(assert, partition, numPartitions)
 	return s.g.Edges(from, to, updatedBefore)
 }
@@ -601,8 +602,8 @@ func (s *Suite) partitionedEdgeIterator(assert *assert.Assertions, partition, nu
 func (s *Suite) partitionRange(assert *assert.Assertions, partition, numPartitions int) (from, to uuid.UUID) {
 	assert.Condition(func() bool { return partition >= 0 && partition < numPartitions }, "invalid partition")
 
-	var minUUID = uuid.Nil
-	var maxUUID = uuid.MustParse("ffffffff-ffff-ffff-ffff-ffffffffffff")
+	minUUID := uuid.Nil
+	maxUUID := uuid.MustParse("ffffffff-ffff-ffff-ffff-ffffffffffff")
 	var err error
 
 	// Calculate the size of each partition as: (2^128 / numPartitions)
