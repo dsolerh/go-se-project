@@ -1,0 +1,18 @@
+services:
+  node_1:
+    image: cockroachdb/cockroach:latest
+    ports:
+      - "8080:8080"
+    command:
+      - start
+      - --insecure
+      - --join=node_1,node_2
+
+  node_2:
+    image: cockroachdb/cockroach:latest
+    ports:
+      - "8081:8080"
+    command:
+      - start
+      - --insecure
+      - --join=node_1,node_2
