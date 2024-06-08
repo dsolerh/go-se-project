@@ -12,10 +12,10 @@ import (
 
 type edgeList []uuid.UUID
 
-var _ graph.Graph = (*Graph)(nil)
+var _ graph.Graph = (*InMemoryGraph)(nil)
 
-// g *Graph graph.Graph
-type Graph struct {
+// g *InMemoryGraph graph.InMemoryGraph
+type InMemoryGraph struct {
 	links map[uuid.UUID]*graph.Link
 	edges map[uuid.UUID]*graph.Edge
 
@@ -26,8 +26,8 @@ type Graph struct {
 }
 
 // NewInMemoryGraph creates a new in-memory link graph.
-func NewInMemoryGraph() *Graph {
-	return &Graph{
+func NewInMemoryGraph() *InMemoryGraph {
+	return &InMemoryGraph{
 		links:        make(map[uuid.UUID]*graph.Link),
 		edges:        make(map[uuid.UUID]*graph.Edge),
 		linkURLIndex: make(map[string]*graph.Link),
@@ -36,7 +36,7 @@ func NewInMemoryGraph() *Graph {
 }
 
 // links
-func (g *Graph) UpsertLink(link *graph.Link) error {
+func (g *InMemoryGraph) UpsertLink(link *graph.Link) error {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
@@ -72,7 +72,7 @@ func (g *Graph) UpsertLink(link *graph.Link) error {
 	return nil
 }
 
-func (g *Graph) FindLink(id uuid.UUID) (*graph.Link, error) {
+func (g *InMemoryGraph) FindLink(id uuid.UUID) (*graph.Link, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -86,7 +86,7 @@ func (g *Graph) FindLink(id uuid.UUID) (*graph.Link, error) {
 	return lCopy, nil
 }
 
-func (g *Graph) Links(fromId uuid.UUID, toId uuid.UUID, retrieveBefore time.Time) (graph.LinkIterator, error) {
+func (g *InMemoryGraph) Links(fromId uuid.UUID, toId uuid.UUID, retrieveBefore time.Time) (graph.LinkIterator, error) {
 	from, to := fromId.String(), toId.String()
 
 	g.mu.RLock()
@@ -102,7 +102,7 @@ func (g *Graph) Links(fromId uuid.UUID, toId uuid.UUID, retrieveBefore time.Time
 }
 
 // edges
-func (g *Graph) UpsertEdge(edge *graph.Edge) error {
+func (g *InMemoryGraph) UpsertEdge(edge *graph.Edge) error {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
@@ -140,7 +140,7 @@ func (g *Graph) UpsertEdge(edge *graph.Edge) error {
 	return nil
 }
 
-func (g *Graph) RemoveStaleEdges(fromId uuid.UUID, updatedBefore time.Time) error {
+func (g *InMemoryGraph) RemoveStaleEdges(fromId uuid.UUID, updatedBefore time.Time) error {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
@@ -158,7 +158,7 @@ func (g *Graph) RemoveStaleEdges(fromId uuid.UUID, updatedBefore time.Time) erro
 	return nil
 }
 
-func (g *Graph) Edges(fromId uuid.UUID, toId uuid.UUID, updatedBefore time.Time) (graph.EdgeIterator, error) {
+func (g *InMemoryGraph) Edges(fromId uuid.UUID, toId uuid.UUID, updatedBefore time.Time) (graph.EdgeIterator, error) {
 	from, to := fromId.String(), toId.String()
 
 	g.mu.RLock()

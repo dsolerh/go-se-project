@@ -2,11 +2,13 @@ package inmemory
 
 import "go-se-project/graph"
 
-var _ graph.LinkIterator = (*iterator[graph.Link])(nil)
-var _ graph.EdgeIterator = (*iterator[graph.Edge])(nil)
+var (
+	_ graph.EdgeIterator = (*iterator[graph.Edge])(nil)
+	_ graph.LinkIterator = (*iterator[graph.Link])(nil)
+)
 
 type iterator[T any] struct {
-	g        *Graph
+	g        *InMemoryGraph
 	items    []*T
 	curIndex int
 }
